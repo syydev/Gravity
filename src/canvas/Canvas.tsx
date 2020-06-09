@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import drawCircle from './circle';
 import drawLine from './line';
 import { Circle, Line } from '../engine/object';
@@ -14,22 +14,21 @@ const lines = Array<Line>();
 
 const Canvas = ({ width, height }: CanvasProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [active, setActive] = useState(true);
-  const [counter, setCounter] = useState(Number);
 
   useEffect(() => {
     for (let i = 0; i < 2; i++) {
-      circles.push(new Circle(10, 100*i + 500, 500, 50));
+      circles.push(new Circle(10, 100 * i + 500, 500, 50));
     }
     circles[0].p.x = 100;
     circles[0].p.y = 100;
-    circles.forEach((circle, i) => lines.push(new Line(0, 100*i + 500, 100, circle.p.x, circle.p.y, 98)));
+    circles.forEach((circle, i) => lines.push(new Line(0, 100 * i + 500, 100, circle.p.x, circle.p.y, 98)));
+
+    render()
   }, []);
 
-useEffect(() => {
+  const render = () => {
     if (!canvasRef.current) { return; }
     canvasRef.current.getContext('2d')?.clearRect(0, 0, width, height);
-    canvasRef.current.addEventListener('mousedown', () => { setActive(!active) });
 
     for (let i in circles) {
       circles[i].init();
@@ -41,8 +40,8 @@ useEffect(() => {
       drawLine(canvasRef.current, lines[i].p.x, lines[i].p.y, circles[i].p.x, circles[i].p.y);
     }
 
-    if (active) { setCounter(counter + 1); }
-  }, [active, counter]);
+    return requestAnimationFrame(render);
+  }
 
   return <canvas ref={canvasRef} width={width} height={height} />;
 };
